@@ -20,20 +20,20 @@ const FormPageOne = () => {
   const [createData,{loading:createLoading}] = useMutation(CREATE_SURVEY_DATA,{
     onCompleted: async() => {
       navigate('/thankyou');
-      const requestBody = {
-        name: userData.name,
-        phone: userData.phone
-      }
-      const response = await axios.post(`${baseUrl}/api/luckydraw/sms`,requestBody)
-      if(response.data.message === 'SMS sent successfully'){
-        setLuckyDrawNumber(response.data.luckyDrawNumber);
-        createLuckyDrawNumber({
-          variables:{
-            phone: userData.phone,
-            number: response.data.luckyDrawNumber.toString()
-          }
-        })
-      }
+      // const requestBody = {
+      //   name: userData.name,
+      //   phone: userData.phone
+      // }
+      // const response = await axios.post(`${baseUrl}/api/luckydraw/sms`,requestBody)
+      // if(response.data.message === 'SMS sent successfully'){
+      //   setLuckyDrawNumber(response.data.luckyDrawNumber);
+      //   createLuckyDrawNumber({
+      //     variables:{
+      //       phone: userData.phone,
+      //       number: response.data.luckyDrawNumber.toString()
+      //     }
+      //   })
+      // }
     }
   });
  
