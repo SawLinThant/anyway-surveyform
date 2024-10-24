@@ -5,19 +5,47 @@ import { VscLoading } from "react-icons/vsc";
 import clsx from "clsx";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import axios from "axios";
+import { CREATE_LUCKYDRAW_NUMBER } from "../../../graphql/mutation/luckydraw";
 
 const FormPageOne = () => {
   const navigate = useNavigate();
+  const [createLuckyDrawNumber,{loading:createNUmberLoading}] = useMutation(CREATE_LUCKYDRAW_NUMBER)
+  const [luckyDrawNUmber,setLuckyDrawNumber] = useState(''); 
+  const [userData,setUserData] = useState({
+    name:'',
+    phone:''
+  })
   const [createData,{loading:createLoading}] = useMutation(CREATE_SURVEY_DATA,{
-    onCompleted:() => {
-      navigate('/thankyou')
+    onCompleted: async() => {
+      navigate('/thankyou');
+      const requestBody = {
+        name: userData.name,
+        phone: userData.phone
+      }
+      const response = await axios.post(`${baseUrl}/api/luckydraw/sms`,requestBody)
+      if(response.data.message === 'SMS sent successfully'){
+        setLuckyDrawNumber(response.data.luckyDrawNumber);
+        createLuckyDrawNumber({
+          variables:{
+            phone: userData.phone,
+            number: response.data.luckyDrawNumber.toString()
+          }
+        })
+      }
     }
   });
+ 
   const { register, handleSubmit,formState:{errors} } = useForm();
   const myanmarPhoneNumberPattern = /^09\d{7,9}$/;
+  const baseUrl = import.meta.env.VITE_APP_SMS_BASE_URL;
   const handleCreate = handleSubmit(async(credentials) => {
     try{
-      console.log("click")
+      setUserData({
+        name: credentials.name,
+        phone: credentials.phone
+      });
      await createData({
         variables:{
           name:credentials.name,

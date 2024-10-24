@@ -6,7 +6,7 @@ import Thankyou from './pages/thankyou'
 function App() {
   return (
     
-      <div className='w-screen h-screen overflow-hidden flex items-center justify-center'>
+      <div className='w-screen h-screen lg:h-full lg:w-full overflow-hidden flex items-center justify-center'>
         <Routes>
           <Route path='*' element={<SurveyForm/>}/>
           <Route path='thankyou' element={<Thankyou/>}/>
