@@ -1,18 +1,22 @@
 import Input from "../../common/components/custom-input";
-import { useMutation } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { CREATE_SURVEY_DATA } from "../../../graphql/mutation/survey";
 import { VscLoading } from "react-icons/vsc";
 import clsx from "clsx";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { CREATE_LUCKYDRAW_NUMBER } from "../../../graphql/mutation/luckydraw";
+import Dropdown from "../../common/components/dropdown";
+import { GET_EVENT_THEME } from "../../../graphql/query/theme";
 
 const FormPageOne = () => {
   const navigate = useNavigate();
   const [createLuckyDrawNumber,{loading:createNUmberLoading}] = useMutation(CREATE_LUCKYDRAW_NUMBER)
   const [luckyDrawNUmber,setLuckyDrawNumber] = useState(''); 
+  const [themeOptions,setThemeOptions] = useState();
+  const [theme,setTheme] = useState();
   const [userData,setUserData] = useState({
     name:'',
     phone:''
@@ -36,7 +40,12 @@ const FormPageOne = () => {
       // }
     }
   });
- 
+  const {data:themeData,loading:fetcTheme} = useQuery(GET_EVENT_THEME);
+  useEffect(() => {
+    if(themeData && themeData.event_themes){
+      setThemeOptions(themeData.event_themes)
+    }
+  },[themeData])
   const { register, handleSubmit,formState:{errors} } = useForm();
   const myanmarPhoneNumberPattern = /^09\d{7,9}$/;
   const baseUrl = import.meta.env.VITE_APP_SMS_BASE_URL;
@@ -50,7 +59,7 @@ const FormPageOne = () => {
         variables:{
           name:credentials.name,
           phone:credentials.phone,
-          theme: credentials.theme,
+          theme: theme,
           aboutus: credentials.aboutus
         }
       })
@@ -58,6 +67,7 @@ const FormPageOne = () => {
       console.log("error creating data")
     }
   })
+  console.log(themeOptions)
   return (
     <div className="w-full h-full bg-primary rounded-t-[2.25rem] px-6 pt-4 pb-8">
       <form
@@ -85,14 +95,7 @@ const FormPageOne = () => {
             }
            })}
         />
-        <Input
-          type="text"
-          label="What is your favourite event theme?"
-          name="theme"
-          placeholder="Please enter your answer"
-          optional={true}
-          register={register}
-        />
+        <Dropdown label="test label" options={themeOptions} setOption={setTheme}/>
         <Input
           type="text"
           label="How did you hear about us?"
