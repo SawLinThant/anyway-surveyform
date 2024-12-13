@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
 export const CREATE_SURVEY_DATA = gql`
-  mutation createCard(
+  mutation createSurveyData(
     $name: String
     $phone: String
     $theme: String
